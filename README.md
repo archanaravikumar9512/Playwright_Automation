@@ -233,3 +233,18 @@ The repository excludes transient or machine-specific content:
 - Playwright authentication state
 
 Commit `package.json` and `package-lock.json` together so other developers and CI can install the same dependency tree.
+
+
+## API automation
+
+The API suite uses the same Playwright `APIRequestContext` abstraction as the UI framework. It includes GET, POST, PUT, PATCH and DELETE helpers, status/body assertions, a deterministic payload factory, and public API examples against JSONPlaceholder. JSONPlaceholder simulates writes; POST/PUT/PATCH/DELETE are not persisted by that service. For fully deterministic CRUD lifecycle testing, point `API_BASE_URL` at a controlled test API.
+
+Run API scenarios separately with `npm run test:api`. Run UI scenarios with `npm run test:ui`.
+
+## Environment configuration
+
+Copy `.env.example` to `.env` for local development. The framework loads `.env` with Node's native `process.loadEnvFile` (Node 22.12+). Do not commit `.env` or real credentials. `TEST_ENV` supports `local`, `qa`, and `staging`; QA/staging require `E2E_USERNAME` and `E2E_PASSWORD` to be injected by the environment/secret manager. Set `BASE_URL`, `API_BASE_URL`, `BROWSER`, `HEADLESS`, `CUCUMBER_PARALLEL`, and optionally `API_TOKEN`. Environment example templates live in `config/environments/`.
+
+## CI/CD
+
+GitHub Actions runs verification and the Cucumber suite on pushes and pull requests to `main`, using Chromium, Firefox and WebKit. It uploads the HTML report and Cucumber JSON as workflow artifacts even when tests fail. A weekday nightly regression workflow is also provided. Configure any non-local credentials as GitHub Actions repository/environment secrets; never place secrets in workflow YAML.

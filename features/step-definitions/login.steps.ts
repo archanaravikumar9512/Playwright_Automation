@@ -1,5 +1,6 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { getEnvironment } from '../../src/config/environment.js';
+import { userScenarios } from '../../src/data/users.js';
 import type { CustomWorld } from '../support/world.js';
 
 Given('I am on the sign-in page', async function (this: CustomWorld) {
@@ -11,23 +12,33 @@ Given('I am on the sign-in page', async function (this: CustomWorld) {
 });
 
 When('I sign in with valid credentials', async function (this: CustomWorld) {
-  const environment = getEnvironment();
-
   if (!this.loginPage) {
     throw new Error('LoginPage is not initialized.');
   }
 
-  await this.loginPage.signIn(environment.username, environment.password);
+  const environment = getEnvironment();
+
+  await this.loginPage.signIn(
+    environment.username,
+    environment.password
+  );
 });
 
 When('I sign in with an invalid password', async function (this: CustomWorld) {
-  const environment = getEnvironment();
-
   if (!this.loginPage) {
     throw new Error('LoginPage is not initialized.');
   }
 
-  await this.loginPage.signIn(environment.username, 'incorrect-password');
+  const credentials = userScenarios.invalidPassword;
+
+  if (!credentials) {
+    throw new Error('Invalid password test data is missing.');
+  }
+
+  await this.loginPage.signIn(
+    credentials.username,
+    credentials.password
+  );
 });
 
 Then('I should see the welcome page', async function (this: CustomWorld) {
@@ -38,10 +49,13 @@ Then('I should see the welcome page', async function (this: CustomWorld) {
   await this.loginPage.expectWelcome();
 });
 
-Then('I should see the login error {string}', async function (this: CustomWorld, message: string) {
-  if (!this.loginPage) {
-    throw new Error('LoginPage is not initialized.');
-  }
+Then(
+  'I should see the login error {string}',
+  async function (this: CustomWorld, message: string) {
+    if (!this.loginPage) {
+      throw new Error('LoginPage is not initialized.');
+    }
 
-  await this.loginPage.expectLoginError(message);
-});
+    await this.loginPage.expectLoginError(message);
+  }
+);

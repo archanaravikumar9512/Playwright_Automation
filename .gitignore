@@ -4,8 +4,9 @@ node_modules/
 !.env.example
 
 dist/
-reports/cucumber-report.json
-reports/cucumber-report.html
+reports/*
+!reports/html/
+!reports/html/**
 test-results/
 playwright-report/
 playwright/.auth/
@@ -15,6 +16,3 @@ playwright/.auth/
 .vscode/
 .idea/
 coverage/
-
-!reports/html/
-!reports/html/**

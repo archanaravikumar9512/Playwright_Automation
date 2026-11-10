@@ -34,7 +34,12 @@
     "codegen": "playwright codegen",
     "ci": "npm run verify && npm test",
     "report:open": "node scripts/open-report.mjs",
-    "test:report": "npm test && npm run report"
+    "test:report": "npm test && npm run report",
+    "test:api": "npm run clean && npm run build && cucumber-js --config cucumber.mjs --tags \"@api\"",
+    "test:ui": "npm run clean && npm run build && cucumber-js --config cucumber.mjs --tags \"not @api\"",
+    "test:qa": "cross-env TEST_ENV=qa npm test",
+    "test:staging": "cross-env TEST_ENV=staging npm test",
+    "test:local": "cross-env TEST_ENV=local npm test"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^13.2.0",

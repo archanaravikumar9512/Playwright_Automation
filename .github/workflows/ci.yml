@@ -1,0 +1,64 @@
+name: Playwright Cucumber CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality-and-tests:
+    name: Quality, API and UI tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install browser
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Verify code quality
+        if: matrix.browser == 'chromium'
+        run: npm run verify
+      - name: Start demo application
+        run: |
+          npm run serve > /tmp/demo-app.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/demo-app.log
+          exit 1
+      - name: Run Cucumber suite
+        env:
+          BROWSER: ${{ matrix.browser }}
+          HEADLESS: 'true'
+          BASE_URL: http://127.0.0.1:4173
+          API_BASE_URL: https://jsonplaceholder.typicode.com
+        run: npm test
+      - name: Generate HTML report
+        if: always()
+        run: npm run report:generate
+      - name: Upload execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report-${{ matrix.browser }}
+          path: |
+            reports/html/
+            reports/cucumber-report.json
+          if-no-files-found: warn
+          retention-days: 14

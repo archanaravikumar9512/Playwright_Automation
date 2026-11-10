@@ -1,0 +1,41 @@
+name: Nightly regression
+
+on:
+  schedule:
+    - cron: '0 2 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Start demo app
+        run: |
+          npm run serve > /tmp/demo-app.log 2>&1 &
+          for attempt in {1..30}; do curl --fail http://127.0.0.1:4173/ >/dev/null && exit 0; sleep 1; done
+          cat /tmp/demo-app.log; exit 1
+      - name: Run regression suite
+        env:
+          BASE_URL: http://127.0.0.1:4173
+          API_BASE_URL: https://jsonplaceholder.typicode.com
+          HEADLESS: 'true'
+        run: npm run test:regression
+      - name: Generate report
+        if: always()
+        run: npm run report:generate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightly-regression-report
+          path: reports/html/
+          if-no-files-found: warn
