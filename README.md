@@ -234,7 +234,6 @@ The repository excludes transient or machine-specific content:
 
 Commit `package.json` and `package-lock.json` together so other developers and CI can install the same dependency tree.
 
-
 ## API automation
 
 The API suite uses the same Playwright `APIRequestContext` abstraction as the UI framework. It includes GET, POST, PUT, PATCH and DELETE helpers, status/body assertions, a deterministic payload factory, and public API examples against JSONPlaceholder. JSONPlaceholder simulates writes; POST/PUT/PATCH/DELETE are not persisted by that service. For fully deterministic CRUD lifecycle testing, point `API_BASE_URL` at a controlled test API.

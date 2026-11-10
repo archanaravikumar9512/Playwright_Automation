@@ -1,4 +1,8 @@
-export interface NewPost { title: string; body: string; userId: number; }
+export interface NewPost {
+  title: string;
+  body: string;
+  userId: number;
+}
 
 export function buildPost(overrides: Partial<NewPost> = {}): NewPost {
   return {

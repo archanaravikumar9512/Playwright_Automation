@@ -18,10 +18,7 @@ When('I sign in with valid credentials', async function (this: CustomWorld) {
 
   const environment = getEnvironment();
 
-  await this.loginPage.signIn(
-    environment.username,
-    environment.password
-  );
+  await this.loginPage.signIn(environment.username, environment.password);
 });
 
 When('I sign in with an invalid password', async function (this: CustomWorld) {
@@ -35,10 +32,7 @@ When('I sign in with an invalid password', async function (this: CustomWorld) {
     throw new Error('Invalid password test data is missing.');
   }
 
-  await this.loginPage.signIn(
-    credentials.username,
-    credentials.password
-  );
+  await this.loginPage.signIn(credentials.username, credentials.password);
 });
 
 Then('I should see the welcome page', async function (this: CustomWorld) {
@@ -49,13 +43,10 @@ Then('I should see the welcome page', async function (this: CustomWorld) {
   await this.loginPage.expectWelcome();
 });
 
-Then(
-  'I should see the login error {string}',
-  async function (this: CustomWorld, message: string) {
-    if (!this.loginPage) {
-      throw new Error('LoginPage is not initialized.');
-    }
-
-    await this.loginPage.expectLoginError(message);
+Then('I should see the login error {string}', async function (this: CustomWorld, message: string) {
+  if (!this.loginPage) {
+    throw new Error('LoginPage is not initialized.');
   }
-);
+
+  await this.loginPage.expectLoginError(message);
+});

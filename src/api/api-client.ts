@@ -51,8 +51,11 @@ export class ApiClient {
   private async parse<T>(response: APIResponse): Promise<ApiResult<T>> {
     const text = await response.text();
     let body: T;
-    try { body = (text ? JSON.parse(text) : null) as T; }
-    catch { throw new Error(`Expected JSON response but received: ${text.slice(0, 200)}`); }
+    try {
+      body = (text ? JSON.parse(text) : null) as T;
+    } catch {
+      throw new Error(`Expected JSON response but received: ${text.slice(0, 200)}`);
+    }
     return { status: response.status(), headers: response.headers(), body };
   }
 

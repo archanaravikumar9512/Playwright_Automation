@@ -43,7 +43,10 @@ Before(async function (this: CustomWorld) {
   this.loginPage = new LoginPage(this.page);
 
   this.api = new ApiClient();
-  await this.api.start(environment.apiBaseUrl, environment.apiToken ? { Authorization: `Bearer ${environment.apiToken}` } : {});
+  await this.api.start(
+    environment.apiBaseUrl,
+    environment.apiToken ? { Authorization: `Bearer ${environment.apiToken}` } : {},
+  );
 });
 
 After(async function (this: CustomWorld, scenario) {
