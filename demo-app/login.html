@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign in</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 520px;
+        margin: 48px auto;
+        padding: 0 20px;
+      }
+      form {
+        display: grid;
+        gap: 12px;
+      }
+      input,
+      button {
+        padding: 10px 12px;
+        font: inherit;
+      }
+      [role='alert'] {
+        min-height: 24px;
+        color: #a40000;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Sign in</h1>
+      <form id="login-form">
+        <label for="email">Email</label>
+        <input id="email" type="email" required autocomplete="username" />
+        <label for="password">Password</label>
+        <input id="password" type="password" required autocomplete="current-password" />
+        <button type="submit">Sign in</button>
+        <p id="error" role="alert" aria-live="polite"></p>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector('#login-form');
+      const error = document.querySelector('#error');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+
+        if (email === 'test.user@example.com' && password === 'ChangeMe') {
+          document.body.innerHTML = '<main><h1>Welcome back</h1><p>You are signed in.</p></main>';
+        } else {
+          error.textContent = 'Invalid email or password';
+        }
+      });
+    </script>
+  </body>
+</html>
